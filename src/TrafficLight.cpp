@@ -90,13 +90,14 @@ void TrafficLight::cycleThroughPhases()
     std::random_device device;
     std::mt19937 generator(device());
     // using distribution(4,6) 
-    std::uniform_int_distribution<int> distribution(4.0,6.0); 
+    std::uniform_int_distribution<int> distribution(4000.0,6000.0); 
     ultimoTiempo = std::chrono::system_clock::now();
+    double thresholdDuration = distribution(generator);
     while(true) 
     {
         //std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        double thresholdDuration = distribution(generator);
-        long duration = std::chrono::duration_cast<std::chrono::seconds>(
+        //double thresholdDuration = distribution(generator);
+        long duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                                   std::chrono::system_clock::now() - ultimoTiempo)
                                 .count();
         //std::cout << "DURATION:  " <<  duration  << std::endl;
@@ -110,6 +111,7 @@ void TrafficLight::cycleThroughPhases()
             }
             TrafficLightPhase_.send(std::move(_currentPhase));
             ultimoTiempo = std::chrono::system_clock::now();
+            thresholdDuration = distribution(generator);
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
